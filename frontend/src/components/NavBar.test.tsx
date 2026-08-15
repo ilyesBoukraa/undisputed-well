@@ -1,4 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { jsonResponse, mockFetchByPath, renderWithProviders } from "../test/renderWithProviders";
 import { NavBar } from "./NavBar";
 
@@ -17,6 +18,7 @@ function mockAuthenticated() {
 describe("NavBar", () => {
   afterEach(() => {
     jest.resetAllMocks();
+    window.localStorage.clear();
   });
 
   it("renders links to dashboard, rigs and wells", async () => {
@@ -30,5 +32,24 @@ describe("NavBar", () => {
     expect(screen.getByRole("link", { name: "Operations" })).toHaveAttribute("href", "/operations");
     expect(screen.getByRole("link", { name: "Predictions" })).toHaveAttribute("href", "/predictions");
     expect(screen.getByRole("link", { name: "Assistant" })).toHaveAttribute("href", "/assistant");
+  });
+
+  it("shows a dark-mode toggle that switches to light mode when clicked", async () => {
+    const user = userEvent.setup();
+    mockAuthenticated();
+    renderWithProviders(<NavBar />);
+
+    await waitFor(() => expect(screen.getByTestId("current-user")).toBeInTheDocument());
+
+    const toggle = screen.getByRole("button", { name: "Switch to dark mode" });
+    await user.click(toggle);
+
+    expect(screen.getByRole("button", { name: "Switch to light mode" })).toBeInTheDocument();
+    expect(window.localStorage.getItem("undisputedwell-theme-mode")).toBe("dark");
+
+    await user.click(screen.getByRole("button", { name: "Switch to light mode" }));
+
+    expect(screen.getByRole("button", { name: "Switch to dark mode" })).toBeInTheDocument();
+    expect(window.localStorage.getItem("undisputedwell-theme-mode")).toBe("light");
   });
 });

@@ -20,3 +20,21 @@ Object.assign(global, { ResizeObserver: ResizeObserverMock });
 if (typeof global.structuredClone !== "function") {
   global.structuredClone = (value: unknown) => JSON.parse(JSON.stringify(value));
 }
+
+// jsdom doesn't implement matchMedia at all — ThemeModeProvider uses it to
+// read/watch the OS's prefers-color-scheme. Defaults to "no system
+// preference matched" (matches: false); tests that care about dark-mode
+// system-preference behavior override window.matchMedia themselves.
+if (typeof window.matchMedia !== "function") {
+  window.matchMedia = (query: string) =>
+    ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    }) as MediaQueryList;
+}

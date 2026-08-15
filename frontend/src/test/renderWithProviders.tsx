@@ -1,10 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { CssBaseline, ThemeProvider } from "@mui/material";
 import { render } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { AuthProvider } from "../auth/AuthContext";
-import { theme } from "../theme/theme";
+import { ThemeModeProvider } from "../theme/ThemeModeProvider";
 
 /**
  * Shared test render helper: wraps a component in the same provider stack
@@ -23,12 +22,11 @@ export function renderWithProviders(
     queryClient,
     ...render(
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
+        <ThemeModeProvider>
           <MemoryRouter initialEntries={[route]}>
             <AuthProvider>{ui}</AuthProvider>
           </MemoryRouter>
-        </ThemeProvider>
+        </ThemeModeProvider>
       </QueryClientProvider>,
     ),
   };

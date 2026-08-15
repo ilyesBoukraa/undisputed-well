@@ -1,7 +1,10 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { useLogoutMutation } from "../auth/useLogoutMutation";
+import { useThemeMode } from "../theme/ThemeModeProvider";
 
 /**
  * Shared header/nav used by every authenticated page. Factored out of the
@@ -11,6 +14,7 @@ import { useLogoutMutation } from "../auth/useLogoutMutation";
 export function NavBar() {
   const { user } = useAuth();
   const logoutMutation = useLogoutMutation();
+  const { mode, toggleMode } = useThemeMode();
 
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
@@ -45,6 +49,16 @@ export function NavBar() {
             {user.email} ({user.role})
           </Typography>
         )}
+        <Tooltip title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}>
+          <IconButton
+            size="small"
+            onClick={toggleMode}
+            aria-label={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            data-testid="theme-mode-toggle"
+          >
+            {mode === "dark" ? <LightModeIcon fontSize="small" /> : <DarkModeIcon fontSize="small" />}
+          </IconButton>
+        </Tooltip>
         <Button
           variant="outlined"
           size="small"

@@ -1,5 +1,4 @@
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { CssBaseline, ThemeProvider } from "@mui/material";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthContext";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
@@ -12,6 +11,7 @@ import { NotFound } from "./pages/NotFound";
 import { OperationsPage } from "./pages/operations/OperationsPage";
 import { PredictionPage } from "./pages/predictions/PredictionPage";
 import { appPersister, createAppQueryClient, PERSIST_MAX_AGE_MS, shouldPersistQuery } from "./queryClient";
+import { ThemeModeProvider } from "./theme/ThemeModeProvider";
 import { RigCreatePage } from "./pages/rigs/RigCreatePage";
 import { RigDetailPage } from "./pages/rigs/RigDetailPage";
 import { RigEditPage } from "./pages/rigs/RigEditPage";
@@ -20,7 +20,6 @@ import { WellCreatePage } from "./pages/wells/WellCreatePage";
 import { WellDetailPage } from "./pages/wells/WellDetailPage";
 import { WellEditPage } from "./pages/wells/WellEditPage";
 import { WellsListPage } from "./pages/wells/WellsListPage";
-import { theme } from "./theme/theme";
 
 export const queryClient = createAppQueryClient();
 
@@ -36,8 +35,7 @@ export function App() {
         },
       }}
     >
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <ThemeModeProvider>
         <ErrorBoundary>
           <BrowserRouter>
             <AuthProvider>
@@ -72,7 +70,7 @@ export function App() {
             </AuthProvider>
           </BrowserRouter>
         </ErrorBoundary>
-      </ThemeProvider>
+      </ThemeModeProvider>
     </PersistQueryClientProvider>
   );
 }
