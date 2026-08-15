@@ -2,6 +2,16 @@
 
 See [PLAN.md](./PLAN.md) for the architecture decision, milestones, and test-coverage plan.
 
+## Screenshots
+
+Signing in, and a walkthrough of the fleet dashboard, rigs/wells, operations, predictions, and
+the AI assistant — all in dark mode (there's a light theme too; toggle it top-right on any page).
+
+<p>
+  <img src="docs/media/login-dark-mode.gif" alt="Signing in to UndisputedWell, dark mode" width="49%" />
+  <img src="docs/media/app-walkthrough-dark-mode.gif" alt="Walkthrough of the UndisputedWell dashboard, rigs, wells, operations, predictions, and assistant pages, dark mode" width="49%" />
+</p>
+
 ## Run everything
 
 ```
