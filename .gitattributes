@@ -1,0 +1,8 @@
+# Normalize line endings to LF in the repo regardless of what OS commits
+# them; Git still checks files out using each platform's native line
+# ending unless a specific rule below says otherwise.
+* text=auto eol=lf
+
+# Windows-only scripts genuinely need CRLF to run correctly.
+*.bat text eol=crlf
+*.cmd text eol=crlf

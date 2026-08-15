@@ -19,12 +19,14 @@ class Settings(BaseSettings):
         "postgresql+psycopg2://undisputedwell:undisputedwell@postgres:5432/undisputedwell"
     )
 
-    # Session cookie settings (M1) — declared here now so config stays centralized
-    # as auth is built out.
+    # Session cookie settings (M1). Sessions and CSRF tokens are opaque,
+    # cryptographically random values (secrets.token_urlsafe — see
+    # core/security.py's generate_token) checked against the sessions
+    # table, not signed/HMAC'd tokens — so there's deliberately no secret
+    # key here to manage or leak.
     session_cookie_name: str = "uw_session"
     csrf_cookie_name: str = "uw_csrf"
     csrf_header_name: str = "X-CSRF-Token"
-    session_secret_key: str = "change-me-in-production"
     session_cookie_secure: bool = True
     session_cookie_samesite: str = "strict"
     session_lifetime_hours: int = 12

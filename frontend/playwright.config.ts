@@ -8,7 +8,10 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
-  reporter: "list",
+  // The HTML report is only generated in CI (see .github/workflows/ci.yml,
+  // which uploads frontend/playwright-report/ on failure) — locally, "list"
+  // alone is faster and doesn't try to open a browser tab.
+  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL: process.env.E2E_BASE_URL ?? "http://localhost:8080",
     trace: "on-first-retry",

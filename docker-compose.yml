@@ -2,22 +2,26 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: undisputedwell
-      POSTGRES_PASSWORD: undisputedwell
-      POSTGRES_DB: undisputedwell
+      POSTGRES_USER: ${POSTGRES_USER:-undisputedwell}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-undisputedwell}
+      POSTGRES_DB: ${POSTGRES_DB:-undisputedwell}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U undisputedwell"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-undisputedwell}"]
       interval: 5s
       timeout: 5s
       retries: 10
+    restart: unless-stopped
 
   backend:
     build:
       context: ./backend
     environment:
-      DATABASE_URL: postgresql+psycopg2://undisputedwell:undisputedwell@postgres:5432/undisputedwell
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-undisputedwell}:${POSTGRES_PASSWORD:-undisputedwell}@postgres:5432/${POSTGRES_DB:-undisputedwell}
+      # SESSION_COOKIE_SECURE defaults to true (see README's production
+      # note) — override to false only for a non-HTTPS local setup.
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-true}
     depends_on:
       postgres:
         condition: service_healthy
@@ -26,16 +30,26 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    restart: unless-stopped
 
   web:
     build:
       context: .
       dockerfile: nginx/Dockerfile
     ports:
-      - "8080:80"
+      - "${WEB_PORT:-8080}:80"
     depends_on:
       backend:
         condition: service_healthy
+    healthcheck:
+      # 127.0.0.1, not localhost — BusyBox wget can resolve "localhost" to
+      # ::1 first, and connect-refuse there even with an IPv6 listener
+      # freshly added, if the container's resolver ordering is unlucky.
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/api/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
 
 volumes:
   postgres_data:
