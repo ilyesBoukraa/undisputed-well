@@ -143,3 +143,29 @@ Pipeline: Jest+RTL with Istanbul coverage gate → Playwright (headless) → pyt
 ## Post-M7 additions
 
 - **Dark mode** (user request, post-plan): `ThemeModeProvider` — follows OS `prefers-color-scheme` live until the user picks explicitly via the NavBar toggle, then persists that choice to localStorage and stops following the OS. `CssBaseline enableColorScheme` so native browser widgets match too, not just MUI's own components. Consolidated what was three separately-wired providers (QueryClient/Theme/CssBaseline in App.tsx and in the test helper) into this one provider. jsdom doesn't implement `matchMedia` at all — polyfilled in `setupTests.ts` (same class of gap as `ResizeObserver`/`structuredClone` from M4/M5). Verified end-to-end on a from-zero `docker compose down -v && up --build --wait`: backend pytest 121/121, frontend Jest 213/213 (98%+ coverage), Playwright e2e 17/17 including a new `dark-mode.spec.ts` (OS-follow → explicit override → persists across reload), plus a manual visual check in a real browser.
+
+## UI Redesign milestones
+
+The current UI works but looks generic (default MUI + a leftover default-Vite favicon that says nothing about oil & gas). Goal: a distinctive, "futuristic" visual identity that's still grounded in what this product actually is — an industrial well/rig telemetry platform — not generic sci-fi dressing. Starting with the login page per explicit instruction; later milestones extend the same system to the rest of the app. Each milestone gets its own from-zero verification (Jest + Playwright + a real visual check) before moving to the next, matching every prior milestone's discipline.
+
+### UI0 — Design foundation
+Token system (color, type) that the rest of the redesign builds on, validated as a standalone visual preview before touching real app code. Palette: keep the existing blue as primary (continuity), add an amber/copper "instrumentation" accent (gauges, warning lamps — distinct from the generic blue-purple SaaS gradient the AI-design-defaults tend toward) for telemetry-flavored decoration; dark-first, full light-theme pair. Type: Rajdhani (display/headings — technical/HUD character without tipping into sci-fi cliché) + IBM Plex Sans (body/UI — legible, engineering heritage) + IBM Plex Mono (small telemetry-style captions), embedded as real `@font-face` data URIs, not a CDN link. Favicon: a minimal derrick mark, replacing the untouched default Vite icon.
+**Tests:** none yet (visual-only artifact preview) — real component/e2e coverage starts at UI1 once tokens land in the actual codebase (`theme.ts` / `ThemeModeProvider`).
+
+### UI1 — Login page redesign
+Layered animated background — aurora glow blobs (soft, blurred, drifting) beneath topographic contour lines (slow seamless horizontal drift) — behind the existing login card, restyled with the UI0 tokens/type. Adds the dark/light toggle to the login page itself (today it only exists in the authenticated NavBar, so an unauthenticated visitor has no way to switch it). Respects `prefers-reduced-motion`.
+**Tests:** existing Login component tests + new ones for the login-page theme toggle, Playwright e2e (toggle present and working pre-auth, existing login-flow specs still pass unmodified), manual visual check in both themes.
+
+### UI2 — Dashboard redesign
+The "cool and futuristic" treatment for the authenticated shell (NavBar + Dashboard) — scope to be pinned down in its own design conversation before implementation, the same way UI0/UI1 were, rather than guessed at up front.
+**Tests:** Dashboard/NavBar component tests updated for whatever changes, full e2e suite still green (NavBar is shared chrome for every page — a regression here breaks everything downstream), manual visual check.
+
+### UI3 — Redesign rollout to remaining pages
+Extend the UI0 design system to Rigs, Wells, Operations, Predictions, and the Assistant once it's proven out on login + dashboard. Scope TBD after UI1/UI2 land and the direction is validated with real usage.
+**Tests:** full Jest + Playwright suite, page by page, matching the coverage discipline of every prior milestone.
+
+### Execution status
+- [ ] UI0 — Design foundation
+- [ ] UI1 — Login page redesign
+- [ ] UI2 — Dashboard redesign
+- [ ] UI3 — Redesign rollout to remaining pages
