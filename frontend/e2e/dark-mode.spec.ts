@@ -35,3 +35,21 @@ test("follows the OS color scheme until the user overrides it, then persists acr
   await page.emulateMedia({ colorScheme: "light" });
   await expect(page.locator("html")).toHaveCSS("color-scheme", "light");
 });
+
+// UI1: previously only the authenticated NavBar had a toggle — an
+// unauthenticated visitor had no way to switch modes at all.
+test("the login page itself has a working theme toggle, before any authentication", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/login");
+
+  await expect(page.getByRole("heading", { name: "Sign in to UndisputedWell" })).toBeVisible();
+  await expect(page.locator("html")).toHaveCSS("color-scheme", "light");
+
+  await page.getByRole("button", { name: "Switch to dark mode" }).click();
+  await expect(page.locator("html")).toHaveCSS("color-scheme", "dark");
+  await expect(page.getByRole("button", { name: "Switch to light mode" })).toBeVisible();
+
+  // The login form itself is unaffected — still usable after toggling.
+  await expect(page.getByLabel("Email")).toBeVisible();
+  await expect(page.getByLabel("Password")).toBeVisible();
+});

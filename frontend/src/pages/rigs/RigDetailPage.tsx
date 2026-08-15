@@ -1,8 +1,10 @@
-import { Alert, Box, Button, CircularProgress, Paper, Stack, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 import { usePermission } from "../../auth/usePermission";
 import { NavBar } from "../../components/NavBar";
+import { Panel } from "../../components/Panel";
+import { StatusChip } from "../../components/StatusChip";
 import { useDeleteRigMutation, useRigQuery } from "../../api/rigs";
 
 export function RigDetailPage() {
@@ -29,12 +31,15 @@ export function RigDetailPage() {
       )}
 
       {rig && (
-        <Paper sx={{ p: 4, maxWidth: 480 }}>
+        <Panel sx={{ p: 4, maxWidth: 480 }}>
           <Typography variant="h5" component="h2" gutterBottom>
             {rig.name}
           </Typography>
           <Typography>Location: {rig.location}</Typography>
-          <Typography>Status: {rig.status}</Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, my: 0.5 }}>
+            <Typography>Status:</Typography>
+            <StatusChip status={rig.status} />
+          </Box>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
             Created {new Date(rig.created_at).toLocaleDateString()}
           </Typography>
@@ -75,7 +80,7 @@ export function RigDetailPage() {
               Could not delete this rig.
             </Alert>
           )}
-        </Paper>
+        </Panel>
       )}
     </Box>
   );

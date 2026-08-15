@@ -56,7 +56,8 @@ describe("WellDetailPage", () => {
     renderPage(["well:read"]);
 
     expect(await screen.findByText("Well-1")).toBeInTheDocument();
-    expect(screen.getByText("Status: producing")).toBeInTheDocument();
+    expect(screen.getByText("Status:")).toBeInTheDocument();
+    expect(screen.getByText("producing")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Rig Alpha" })).toHaveAttribute("href", "/rigs/3");
   });
 

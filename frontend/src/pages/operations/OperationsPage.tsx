@@ -1,7 +1,9 @@
-import { Alert, Box, MenuItem, TextField, Typography } from "@mui/material";
+import { Alert, Box, MenuItem, TextField } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
 import { usePermission } from "../../auth/usePermission";
 import { NavBar } from "../../components/NavBar";
+import { PageHeader } from "../../components/PageHeader";
+import { Panel } from "../../components/Panel";
 import { useWellsQuery } from "../../api/wells";
 import { AlertsPanel } from "./AlertsPanel";
 import { ReadingsHistory } from "./ReadingsHistory";
@@ -27,13 +29,13 @@ export function OperationsPage() {
     <Box sx={{ p: 4 }}>
       <NavBar />
 
-      <Typography variant="h5" component="h2" gutterBottom>
-        Operations
-      </Typography>
+      <PageHeader eyebrow="Live telemetry" title="Operations" />
 
-      <AlertsPanel wellId={wellId} />
+      <Panel sx={{ mb: 3 }}>
+        <AlertsPanel wellId={wellId} />
+      </Panel>
 
-      <Box sx={{ mt: 4 }}>
+      <Box sx={{ mb: 3 }}>
         <TextField
           select
           label="Well"
@@ -53,17 +55,25 @@ export function OperationsPage() {
       </Box>
 
       {wellId === undefined && (
-        <Alert severity="info" data-testid="operations-no-well-selected" sx={{ mt: 2 }}>
+        <Alert severity="info" data-testid="operations-no-well-selected">
           Select a well above to view its thresholds, record a reading, or see its recent
           readings.
         </Alert>
       )}
 
       {wellId !== undefined && (
-        <Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 4 }}>
-          {canEdit && <RecordReadingForm wellId={wellId} />}
-          <ThresholdsPanel wellId={wellId} />
-          <ReadingsHistory wellId={wellId} />
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          {canEdit && (
+            <Panel>
+              <RecordReadingForm wellId={wellId} />
+            </Panel>
+          )}
+          <Panel>
+            <ThresholdsPanel wellId={wellId} />
+          </Panel>
+          <Panel>
+            <ReadingsHistory wellId={wellId} />
+          </Panel>
         </Box>
       )}
     </Box>

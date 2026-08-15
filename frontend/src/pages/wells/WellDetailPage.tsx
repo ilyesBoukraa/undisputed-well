@@ -1,8 +1,10 @@
-import { Alert, Box, Button, CircularProgress, Paper, Stack, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 import { usePermission } from "../../auth/usePermission";
 import { NavBar } from "../../components/NavBar";
+import { Panel } from "../../components/Panel";
+import { StatusChip } from "../../components/StatusChip";
 import { useDeleteWellMutation, useWellQuery } from "../../api/wells";
 
 export function WellDetailPage() {
@@ -29,11 +31,14 @@ export function WellDetailPage() {
       )}
 
       {well && (
-        <Paper sx={{ p: 4, maxWidth: 480 }}>
+        <Panel sx={{ p: 4, maxWidth: 480 }}>
           <Typography variant="h5" component="h2" gutterBottom>
             {well.name}
           </Typography>
-          <Typography>Status: {well.status}</Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, my: 0.5 }}>
+            <Typography>Status:</Typography>
+            <StatusChip status={well.status} />
+          </Box>
           <Typography>Depth: {well.depth_m ?? "—"} m</Typography>
           <Typography>Spud date: {well.spud_date ?? "—"}</Typography>
           <Typography>
@@ -84,7 +89,7 @@ export function WellDetailPage() {
               Could not delete this well.
             </Alert>
           )}
-        </Paper>
+        </Panel>
       )}
     </Box>
   );

@@ -1,0 +1,69 @@
+/*
+ * Self-hosted, so imported once here rather than linked from a font CDN —
+ * no third-party request on every page load, and it works the same in the
+ * Docker-built static bundle as it does in dev. Files are checked in under
+ * ./fonts and picked up by Vite's asset pipeline (hashed + copied on build)
+ * because they're referenced by url() from CSS that gets imported into the
+ * JS graph (see ThemeModeProvider.tsx), not served from /public.
+ *
+ * Rajdhani: display/heading face — technical, HUD-adjacent character
+ * without tipping into sci-fi cliché.
+ * IBM Plex Sans: body/UI face — legible, engineering heritage.
+ * IBM Plex Mono: telemetry-style captions/labels (readings, timestamps).
+ */
+
+@font-face {
+  font-family: "Rajdhani";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/rajdhani-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Rajdhani";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/rajdhani-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Rajdhani";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./fonts/rajdhani-700.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/plexsans-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/plexsans-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/plexsans-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/plexmono-400.woff2") format("woff2");
+}

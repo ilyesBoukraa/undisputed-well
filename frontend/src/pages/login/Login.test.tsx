@@ -1,7 +1,7 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Route, Routes } from "react-router-dom";
-import { jsonResponse, mockFetchByPath, renderWithProviders } from "../test/renderWithProviders";
+import { jsonResponse, mockFetchByPath, renderWithProviders } from "../../test/renderWithProviders";
 import { Login } from "./Login";
 
 function renderLoginWithRoutes() {
@@ -17,6 +17,7 @@ function renderLoginWithRoutes() {
 describe("Login", () => {
   afterEach(() => {
     jest.resetAllMocks();
+    window.localStorage.clear();
   });
 
   it("renders the login form", () => {
@@ -111,5 +112,33 @@ describe("Login", () => {
     await user.click(screen.getByRole("button", { name: "Sign in" }));
 
     await waitFor(() => expect(screen.getByText("Dashboard Page")).toBeInTheDocument());
+  });
+
+  // UI1: the login page previously had no way to change theme at all —
+  // only the authenticated NavBar had a toggle, so an unauthenticated
+  // visitor was stuck with whatever the OS preference resolved to.
+  describe("theme toggle", () => {
+    it("shows a dark-mode toggle that switches to light mode when clicked, before any login", async () => {
+      const user = userEvent.setup();
+      renderLoginWithRoutes();
+
+      const toggle = screen.getByRole("button", { name: "Switch to dark mode" });
+      await user.click(toggle);
+
+      expect(screen.getByRole("button", { name: "Switch to light mode" })).toBeInTheDocument();
+      expect(window.localStorage.getItem("undisputedwell-theme-mode")).toBe("dark");
+
+      await user.click(screen.getByRole("button", { name: "Switch to light mode" }));
+
+      expect(screen.getByRole("button", { name: "Switch to dark mode" })).toBeInTheDocument();
+      expect(window.localStorage.getItem("undisputedwell-theme-mode")).toBe("light");
+    });
+
+    it("does not block the login form — the rest of the page still renders and works", () => {
+      renderLoginWithRoutes();
+
+      expect(screen.getByRole("button", { name: "Switch to dark mode" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Sign in to UndisputedWell" })).toBeInTheDocument();
+    });
   });
 });

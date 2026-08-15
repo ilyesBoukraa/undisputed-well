@@ -10,6 +10,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import "./fonts.css";
 import { createAppTheme } from "./theme";
 
 const STORAGE_KEY = "undisputedwell-theme-mode";

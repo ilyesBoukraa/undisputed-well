@@ -47,6 +47,16 @@ export function usePredictionsQuery(wellId: number | undefined) {
   });
 }
 
+/** Every prediction across every well — the backend already supports
+ * omitting `well_id` for this; used by the dashboard's fleet-wide risk
+ * summary, as opposed to `usePredictionsQuery`'s per-well history view. */
+export function useAllPredictionsQuery() {
+  return useQuery({
+    queryKey: [...PREDICTIONS_QUERY_KEY, "all"],
+    queryFn: () => apiGet<{ items: PredictionSummary[]; total: number }>("/predictions"),
+  });
+}
+
 export function usePredictionQuery(predictionId: number | undefined) {
   return useQuery({
     queryKey: [...PREDICTIONS_QUERY_KEY, "detail", predictionId],

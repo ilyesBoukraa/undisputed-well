@@ -52,4 +52,14 @@ describe("NavBar", () => {
     expect(screen.getByRole("button", { name: "Switch to dark mode" })).toBeInTheDocument();
     expect(window.localStorage.getItem("undisputedwell-theme-mode")).toBe("light");
   });
+
+  it("marks the current route's link as the active page and no other", async () => {
+    mockAuthenticated();
+    renderWithProviders(<NavBar />, { route: "/wells" });
+
+    await waitFor(() => expect(screen.getByTestId("current-user")).toBeInTheDocument());
+    expect(screen.getByRole("link", { name: "Wells" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Dashboard" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Rigs" })).not.toHaveAttribute("aria-current");
+  });
 });

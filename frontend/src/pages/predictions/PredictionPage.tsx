@@ -1,8 +1,10 @@
-import { Alert, Box, MenuItem, TextField, Typography } from "@mui/material";
+import { Alert, Box, MenuItem, TextField } from "@mui/material";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { usePermission } from "../../auth/usePermission";
 import { NavBar } from "../../components/NavBar";
+import { PageHeader } from "../../components/PageHeader";
+import { Panel } from "../../components/Panel";
 import { useWellsQuery } from "../../api/wells";
 import { useCreatePredictionMutation, usePredictionQuery } from "../../api/predictions";
 import { PredictionChart } from "./PredictionChart";
@@ -32,9 +34,7 @@ export function PredictionPage() {
     <Box sx={{ p: 4 }}>
       <NavBar />
 
-      <Typography variant="h5" component="h2" gutterBottom>
-        Asphaltene Prediction
-      </Typography>
+      <PageHeader eyebrow="Screening model" title="Asphaltene Prediction" />
 
       <TextField
         select
@@ -60,27 +60,33 @@ export function PredictionPage() {
       )}
 
       {wellId !== undefined && (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
           {canEdit && (
-            <PredictionForm
-              wellId={wellId}
-              isSubmitting={createMutation.isPending}
-              submitError={createMutation.error}
-              onSubmit={(values) =>
-                createMutation.mutate(values, {
-                  onSuccess: (prediction) => setSelectedPredictionId(prediction.id),
-                })
-              }
-            />
+            <Panel>
+              <PredictionForm
+                wellId={wellId}
+                isSubmitting={createMutation.isPending}
+                submitError={createMutation.error}
+                onSubmit={(values) =>
+                  createMutation.mutate(values, {
+                    onSuccess: (prediction) => setSelectedPredictionId(prediction.id),
+                  })
+                }
+              />
+            </Panel>
           )}
 
-          <PredictionChart prediction={selectedPrediction} />
+          <Panel>
+            <PredictionChart prediction={selectedPrediction} />
+          </Panel>
 
-          <PredictionHistoryList
-            wellId={wellId}
-            selectedId={selectedPredictionId}
-            onSelect={setSelectedPredictionId}
-          />
+          <Panel>
+            <PredictionHistoryList
+              wellId={wellId}
+              selectedId={selectedPredictionId}
+              onSelect={setSelectedPredictionId}
+            />
+          </Panel>
         </Box>
       )}
     </Box>

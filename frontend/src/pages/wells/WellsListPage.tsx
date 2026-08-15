@@ -4,7 +4,6 @@ import {
   Button,
   CircularProgress,
   MenuItem,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -13,11 +12,13 @@ import {
   TableRow,
   TableSortLabel,
   TextField,
-  Typography,
 } from "@mui/material";
 import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import { usePermission } from "../../auth/usePermission";
 import { NavBar } from "../../components/NavBar";
+import { PageHeader } from "../../components/PageHeader";
+import { Panel } from "../../components/Panel";
+import { StatusChip } from "../../components/StatusChip";
 import { useWellsQuery, type WellStatus } from "../../api/wells";
 
 const STATUS_OPTIONS: WellStatus[] = ["drilling", "producing", "shut_in", "abandoned"];
@@ -55,16 +56,17 @@ export function WellsListPage() {
     <Box sx={{ p: 4 }}>
       <NavBar />
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-        <Typography variant="h5" component="h2">
-          Wells
-        </Typography>
-        {canEdit && (
-          <Button component={RouterLink} to="/wells/new" variant="contained">
-            New Well
-          </Button>
-        )}
-      </Box>
+      <PageHeader
+        eyebrow="Fleet management"
+        title="Wells"
+        action={
+          canEdit && (
+            <Button component={RouterLink} to="/wells/new" variant="contained">
+              New Well
+            </Button>
+          )
+        }
+      />
 
       <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
         <TextField
@@ -107,54 +109,58 @@ export function WellsListPage() {
       )}
 
       {data && data.items.length > 0 && (
-        <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <TableSortLabel
-                    active={sort === "name"}
-                    direction={sort === "name" ? order : "asc"}
-                    onClick={() => toggleSort("name")}
-                  >
-                    Name
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>
-                  <TableSortLabel
-                    active={sort === "status"}
-                    direction={sort === "status" ? order : "asc"}
-                    onClick={() => toggleSort("status")}
-                  >
-                    Status
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>Rig</TableCell>
-                <TableCell>Depth (m)</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.items.map((well) => (
-                <TableRow key={well.id} data-testid={`well-row-${well.id}`}>
+        <Panel sx={{ p: 0, overflow: "hidden" }}>
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
                   <TableCell>
-                    <RouterLink to={`/wells/${well.id}`}>{well.name}</RouterLink>
+                    <TableSortLabel
+                      active={sort === "name"}
+                      direction={sort === "name" ? order : "asc"}
+                      onClick={() => toggleSort("name")}
+                    >
+                      Name
+                    </TableSortLabel>
                   </TableCell>
-                  <TableCell>{well.status}</TableCell>
-                  <TableCell>{well.rig ? well.rig.name : "—"}</TableCell>
-                  <TableCell>{well.depth_m ?? "—"}</TableCell>
-                  <TableCell align="right">
-                    {canEdit && (
-                      <Button size="small" component={RouterLink} to={`/wells/${well.id}/edit`}>
-                        Edit
-                      </Button>
-                    )}
+                  <TableCell>
+                    <TableSortLabel
+                      active={sort === "status"}
+                      direction={sort === "status" ? order : "asc"}
+                      onClick={() => toggleSort("status")}
+                    >
+                      Status
+                    </TableSortLabel>
                   </TableCell>
+                  <TableCell>Rig</TableCell>
+                  <TableCell>Depth (m)</TableCell>
+                  <TableCell align="right">Actions</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {data.items.map((well) => (
+                  <TableRow key={well.id} data-testid={`well-row-${well.id}`}>
+                    <TableCell>
+                      <RouterLink to={`/wells/${well.id}`}>{well.name}</RouterLink>
+                    </TableCell>
+                    <TableCell>
+                      <StatusChip status={well.status} />
+                    </TableCell>
+                    <TableCell>{well.rig ? well.rig.name : "—"}</TableCell>
+                    <TableCell>{well.depth_m ?? "—"}</TableCell>
+                    <TableCell align="right">
+                      {canEdit && (
+                        <Button size="small" component={RouterLink} to={`/wells/${well.id}/edit`}>
+                          Edit
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Panel>
       )}
     </Box>
   );

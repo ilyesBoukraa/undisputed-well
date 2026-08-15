@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Alert, Box, Button, MenuItem, Paper, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, MenuItem, TextField, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { ApiError } from "../../api/client";
 import { useRigsQuery } from "../../api/rigs";
+import { Panel } from "../../components/Panel";
 import type { Well, WellInput } from "../../api/wells";
 
 // UI-only shape validation (required/format/range) — FastAPI/Pydantic remains
@@ -73,7 +74,7 @@ export function WellForm({
           : null;
 
   return (
-    <Paper sx={{ p: 4, maxWidth: 480 }}>
+    <Panel sx={{ p: 4, maxWidth: 480 }}>
       <Typography variant="h6" component="h2" gutterBottom>
         {submitLabel}
       </Typography>
@@ -163,6 +164,6 @@ export function WellForm({
           {isSubmitting ? "Saving…" : submitLabel}
         </Button>
       </Box>
-    </Paper>
+    </Panel>
   );
 }
